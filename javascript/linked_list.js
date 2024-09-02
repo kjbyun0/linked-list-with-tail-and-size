@@ -1,6 +1,14 @@
 class LinkedList {
   constructor(head = null) {
     this.head = head;
+    let index = 0;
+    this.tail = this.iterate((curNode, count) => {
+      if (curNode.next === null) {
+        index = count;
+        return true;
+      }
+    });
+    this.size = this.tail === null ? 0 : index + 1;
   }
 
   iterate(callback) {
@@ -47,11 +55,17 @@ class LinkedList {
   addFirst(node) {
     node.next = this.head;
     this.head = node;
+    if (this.tail === null)
+      this.tail = node;
+    this.size++;
   }
 
   // add node to end of list, no nodes should be removed
   // you may wish to use the iterate method
   addLast(node) {
+    this.tail = node;
+    this.size++;
+
     if (this.head === null) {
       this.head = node;
       return;
@@ -63,6 +77,7 @@ class LinkedList {
         return true;
       }
     });
+
   }
 
   // remove the first Node in the list and update head
@@ -71,7 +86,10 @@ class LinkedList {
     const oldHead = this.head;
 
     if (this.head !== null) {
+      if (this.tail === this.head)
+        this.tail = null;
       this.head = this.head.next;
+      this.size--;
     }
 
     return oldHead;
@@ -90,6 +108,8 @@ class LinkedList {
       if (node.next.next === null) {
         oldTail = node.next;
         node.next = null;
+        this.tail = node;
+        this.size--;
         return true;
       }
     });
@@ -109,6 +129,8 @@ class LinkedList {
       if (count === idx - 1) {
         node.next = currNode.next.next;
         currNode.next = node;
+        if (node.next === null)
+          this.tail = node;
 
         return true;
       }
@@ -130,6 +152,9 @@ class LinkedList {
         const oldNext = currNode.next;
         currNode.next = node;
         node.next = oldNext;
+        if (node.next === null)
+          this.tail = node;
+        this.size++;
 
         return true;
       }
@@ -148,6 +173,9 @@ class LinkedList {
       if (count === idx - 1) {
         oldNode = node.next;
         node.next = node.next.next;
+        if (node.next === null)
+          this.tail = node;
+        this.size--;
 
         return true;
       }
@@ -158,6 +186,8 @@ class LinkedList {
 
   clear() {
     this.head = null;
+    this.tail = null;
+    this.size = 0;
   }
 }
 
@@ -174,6 +204,87 @@ if (require.main === module) {
   let emptyList = new LinkedList();
   let oneItemList = new LinkedList(new Node('just one'));
 
+  console.log("");
+  console.log("emptyList: ", emptyList);
+  console.log("oneItemList: ", oneItemList);
+  console.log("list: ", list);
+
+  console.log("");
+  console.log("Test - addFirst");
+  emptyList.addFirst(new Node('one'));
+  console.log("add first node: ", emptyList);
+  emptyList.addFirst(new Node('two'));
+  console.log("add second node: ", emptyList);
+
+  console.log("");
+  console.log("Test - addLast");
+  emptyList = new LinkedList();
+  emptyList.addLast(new Node('one'));
+  console.log("add first node: ", emptyList);
+  emptyList.addLast(new Node('two'));
+  console.log("add second node: ", emptyList);
+
+  console.log("");
+  console.log("Test - removeLast");
+  console.log("initial list: ", emptyList);
+  emptyList.removeLast();
+  console.log("remove last node 1: ", emptyList);
+  emptyList.removeLast();
+  console.log("remove last node 2: ", emptyList);
+
+  console.log("");
+  console.log("Test - removeFirst");
+  emptyList.addFirst(new Node('one'));
+  emptyList.addLast(new Node('two'));
+  console.log("initial list: ", emptyList);
+  emptyList.removeFirst();
+  console.log("remove first node 1: ", emptyList);
+  emptyList.removeFirst();
+  console.log("remove first node 2: ", emptyList);
+
+  // replace(idx, node)
+  console.log("");
+  console.log("Test - replace");
+  emptyList.addFirst(new Node('one'));
+  emptyList.addLast(new Node('two'));
+  console.log("initial list: ", emptyList);
+  emptyList.replace(1, new Node('replace last'));
+  console.log("replace the last node: ", emptyList);
+  emptyList.replace(0, new Node('replace first'));
+  console.log("replace the first node: ", emptyList);
+
+  // clear()
+  console.log("");
+  console.log("Test - clear");
+  console.log("initial list: ", emptyList);
+  emptyList.clear();
+  console.log("clear: ", emptyList);
+
+  // insert(idx, node)
+  console.log("");
+  console.log("Test - insert");
+  console.log("initial list: ", emptyList);
+  emptyList.insert(0, new Node('one'));
+  console.log("insert one: ", emptyList);
+  emptyList.insert(0, new Node('zero'));
+  console.log("insert zero: ", emptyList);
+  emptyList.insert(1, new Node('two'));
+  console.log("insert two: ", emptyList);
+  emptyList.insert(3, new Node('three'));
+  console.log("insert three: ", emptyList);
+
+  // remove(idx)
+  console.log("");
+  console.log("Test - remove");
+  console.log("initial list: ", emptyList);
+  emptyList.remove(3);
+  console.log("remove three: ", emptyList);
+  emptyList.remove(1);
+  console.log("remove two: ", emptyList);
+  emptyList.remove(1);
+  console.log("remove one: ", emptyList);
+  emptyList.remove(0);
+  console.log("remove zero: ", emptyList);
 }
 
 module.exports = {
